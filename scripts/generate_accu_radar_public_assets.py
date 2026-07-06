@@ -32,6 +32,8 @@ mpl.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
+from cartopy import crs as ccrs
+from frykit.plot import add_cn_city, add_cn_province, set_map_ticks
 from PIL import Image
 
 try:
@@ -163,16 +165,42 @@ def plot_single_field(
     plt.rcParams["font.family"] = ["Times New Roman", "SimHei"]
     plt.rcParams["axes.unicode_minus"] = False
 
-    fig, ax = plt.subplots(1, 1, figsize=(6.2, 5.4), constrained_layout=True)
-    mesh = ax.pcolormesh(lon, lat_asc, field, cmap=cmap, norm=norm, shading="nearest")
+    projection = ccrs.PlateCarree()
+    extent = [LON_MIN, LON_MAX, LAT_MIN, LAT_MAX]
+    fig, ax = plt.subplots(
+        1,
+        1,
+        figsize=(6.2, 5.4),
+        constrained_layout=True,
+        subplot_kw={"projection": projection},
+    )
+    ax.set_extent(extent, crs=projection)
+    mesh = ax.pcolormesh(
+        lon,
+        lat_asc,
+        field,
+        cmap=cmap,
+        norm=norm,
+        shading="nearest",
+        transform=projection,
+        rasterized=True,
+        zorder=1,
+    )
     ax.set_title(subtitle, fontsize=18)
-    ax.set_xlim(LON_MIN, LON_MAX)
-    ax.set_ylim(LAT_MIN, LAT_MAX)
+    ax.set_extent(extent, crs=projection)
     ax.set_aspect("equal")
     ax.set_xlabel("经度", fontsize=16)
     ax.set_ylabel("纬度", fontsize=16)
-    ax.tick_params(labelsize=14)
-    ax.grid(True, linestyle="--", linewidth=0.35, alpha=0.35)
+    add_cn_province(ax, edgecolor="black", linewidth=0.7, zorder=3)
+    add_cn_city(ax, edgecolor="0.35", linewidth=0.35, zorder=4)
+    set_map_ticks(
+        ax,
+        extent,
+        xticks=np.arange(np.ceil(LON_MIN), np.floor(LON_MAX) + 1, 4),
+        yticks=np.arange(np.ceil(LAT_MIN), np.floor(LAT_MAX) + 1, 2),
+    )
+    ax.tick_params(labelsize=14, width=1.0)
+    ax.grid(True, linestyle="--", linewidth=0.35, alpha=0.35, zorder=2)
 
     cbar = fig.colorbar(
         mesh,
