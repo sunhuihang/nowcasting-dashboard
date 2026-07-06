@@ -136,26 +136,6 @@ function renderHeader() {
   document.querySelector("#updatedAt").textContent = `updated: ${state.data.updated_at}`;
 }
 
-function renderSummary() {
-  const models = sortedModels();
-  const best = models[0];
-  const cards = [
-    ["模型数量", state.data.models.length, "参与公开对比的模型"],
-    ["当前最佳", best ? best.model_name : "-", best ? `综合评分 ${fmt(compositeScore(best))}` : "-"],
-    ["经典个例", state.caseTime || "2026-07-06 00:00", "观测与全部模型同步展示"],
-    ["评估时效", "6-180 min", "逐 6 分钟，共 30 个时效"]
-  ];
-  document.querySelector("#summaryGrid").innerHTML = cards
-    .map(([label, value, detail]) => `
-      <article class="summary-card">
-        <div class="label">${label}</div>
-        <div class="value">${value}</div>
-        <div class="detail">${detail}</div>
-      </article>
-    `)
-    .join("");
-}
-
 function renderRanking() {
   document.querySelector("#rankingHint").textContent = "总评分 = 0-1h*30% + 1-2h*50% + 2-3h*20%";
   const rows = sortedModels()
@@ -213,7 +193,7 @@ function renderOneScoreChart(metric, threshold) {
   const models = periodData();
   const width = 760;
   const height = 250;
-  const pad = { left: 46, right: 18, top: 16, bottom: 38 };
+  const pad = { left: 58, right: 48, top: 16, bottom: 56 };
   const [minValue, maxValue] = metricRanges[metric];
   const x = (lead) => pad.left + ((lead - 6) / (180 - 6)) * (width - pad.left - pad.right);
   const y = (value) => height - pad.bottom - ((value - minValue) / (maxValue - minValue)) * (height - pad.top - pad.bottom);
@@ -223,7 +203,7 @@ function renderOneScoreChart(metric, threshold) {
     const yy = y(tick);
     return `
       <line x1="${pad.left}" y1="${yy}" x2="${width - pad.right}" y2="${yy}" stroke="#e6ecf2" />
-      <text x="${pad.left - 8}" y="${yy + 4}" text-anchor="end" font-size="11" fill="#607080">${tick}</text>
+      <text x="${pad.left - 8}" y="${yy + 4}" text-anchor="end" font-size="14" fill="#607080">${tick}</text>
     `;
   }).join("");
 
@@ -231,7 +211,7 @@ function renderOneScoreChart(metric, threshold) {
     .filter((lead) => lead === 6 || lead % 24 === 0 || lead === 180)
     .map((lead) => `
       <line x1="${x(lead)}" y1="${height - pad.bottom}" x2="${x(lead)}" y2="${height - pad.bottom + 5}" stroke="#9dadbd" />
-      <text x="${x(lead)}" y="${height - 13}" text-anchor="middle" font-size="11" fill="#607080">${lead}</text>
+      <text x="${x(lead)}" y="${height - 24}" text-anchor="middle" font-size="14" fill="#607080">${lead}</text>
     `)
     .join("");
 
@@ -268,7 +248,7 @@ function renderOneScoreChart(metric, threshold) {
         <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${height - pad.bottom}" stroke="#c9d4df" />
         ${lines}
         ${xLabels}
-        <text x="${width - pad.right}" y="${height - 13}" text-anchor="end" font-size="11" fill="#607080">min</text>
+        <text x="${width - 8}" y="${height - 6}" text-anchor="end" font-size="14" fill="#607080">min</text>
       </svg>
       <div class="chart-legend">${legend}</div>
     </article>
@@ -407,7 +387,6 @@ function advanceRadarAnimation() {
 
 function render() {
   renderHeader();
-  renderSummary();
   renderScoreFormulaTable();
   renderRanking();
   renderScoreCharts();
