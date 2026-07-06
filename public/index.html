@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>短临预报模型评估看板</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Nowcasting Benchmark</p>
+        <h1>短临预报模型评估看板</h1>
+      </div>
+      <div class="status">
+        <span id="datasetVersion">dataset: -</span>
+        <span id="updatedAt">updated: -</span>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="filters" aria-label="筛选条件">
+        <label>
+          数据视角
+          <select id="periodSelect"></select>
+        </label>
+      </section>
+
+      <section class="summary-grid" id="summaryGrid"></section>
+
+      <section class="panel formulas-panel">
+        <div class="panel-head">
+          <h2>评分公式</h2>
+          <span>客观评估口径</span>
+        </div>
+        <div class="formula-grid">
+          <div class="formula-card">
+            <strong>TS 评分</strong>
+            <code>TS = H / (H + M + F)</code>
+          </div>
+          <div class="formula-card">
+            <strong>BIAS 评分</strong>
+            <code>BIAS = (H + F) / (H + M)</code>
+          </div>
+          <div class="formula-card">
+            <strong>SSIM 评分</strong>
+            <code>SSIM = l(x,y) * c(x,y) * s(x,y)</code>
+          </div>
+          <div class="formula-card">
+            <strong>阈值综合</strong>
+            <code>S = S20 * 30% + S35 * 40% + S45 * 30%</code>
+          </div>
+          <div class="formula-card wide">
+            <strong>总评分</strong>
+            <code>S_total = S0-1h * 30% + S1-2h * 50% + S2-3h * 20%</code>
+          </div>
+        </div>
+        <div class="table-wrap formula-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>模型</th>
+                <th>TS 总评分</th>
+                <th>BIAS 总评分</th>
+                <th>SSIM 总评分</th>
+                <th>综合评分</th>
+              </tr>
+            </thead>
+            <tbody id="scoreFormulaTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="layout score-layout">
+        <div class="panel wide">
+          <div class="panel-head">
+            <h2>模型排名</h2>
+            <span id="rankingHint"></span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>排名</th>
+                  <th>模型</th>
+                  <th>TS</th>
+                  <th>BIAS</th>
+                  <th>SSIM</th>
+                  <th>综合分</th>
+                </tr>
+              </thead>
+              <tbody id="rankingTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="scoreCharts" class="score-charts"></div>
+      </section>
+
+      <section class="panel classic-case-panel">
+        <div class="panel-head">
+          <h2>经典个例</h2>
+          <span id="radarCaseMeta">2026-07-06 00:00</span>
+        </div>
+        <div class="lead-viewer">
+          <label>
+            经典个例时间
+            <select id="caseTimeSelect"></select>
+          </label>
+          <label>
+            播放速度
+            <select id="animationSpeedSelect">
+              <option value="1600">0.5×</option>
+              <option value="800" selected>1×</option>
+              <option value="400">2×</option>
+              <option value="200">4×</option>
+            </select>
+          </label>
+          <div class="subsection-title">单帧</div>
+          <label>
+            预报时效
+            <select id="radarLeadSelect"></select>
+          </label>
+          <figure class="radar-frame">
+            <img id="radarLeadImage" src="./cases/radar_spatial_sample.png" alt="指定预报时效的观测与预测回波对比">
+            <figcaption id="radarLeadCaption">等待生成真实对比图</figcaption>
+          </figure>
+          <div class="subsection-title">3小时预报</div>
+          <figure class="radar-frame">
+            <img id="radarAnimation" src="./cases/radar_spatial_sample.png" alt="观测与预测回波动画对比">
+            <figcaption id="radarAnimationCaption">等待生成 GIF/MP4</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 256">
+  <rect width="320" height="256" fill="#f6f9fb"/>
+  <path d="M20 210 C70 180, 92 198, 138 156 C180 116, 216 138, 300 54" fill="none" stroke="#b8c4d1" stroke-width="2"/>
+  <g opacity="0.96" transform="translate(18 7)">
+    <ellipse cx="132" cy="139" rx="77" ry="42" fill="#66ffff"/>
+    <ellipse cx="149" cy="132" rx="62" ry="33" fill="#03cf0e"/>
+    <ellipse cx="165" cy="126" rx="44" ry="24" fill="#fff200"/>
+    <ellipse cx="181" cy="121" rx="27" ry="16" fill="#ff934a"/>
+    <ellipse cx="192" cy="118" rx="14" ry="10" fill="#ff0000"/>
+  </g>
+  <text x="14" y="28" font-family="Arial, sans-serif" font-size="16" fill="#17212b">BetaFlow</text>
+</svg>
+
