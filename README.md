@@ -18,20 +18,46 @@ D:\codex_work\tmp\nowcasting-dashboard
 
 实际应以服务器目录为准，因为真实观测、预测和公开图片都在服务器上生成，并从服务器推送到 GitHub。
 
+## 公开访问地址
+
+GitHub Pages 已经部署成功，外网访问地址：
+
+```text
+https://sunhuihang.github.io/nowcasting-dashboard/
+```
+
+GitHub 仓库：
+
+```text
+https://github.com/sunhuihang/nowcasting-dashboard
+```
+
+当前 Pages 发布方式为 GitHub Actions，发布目录为 `public/`。
+
 ## 当前网页功能
 
-- 模型总览卡片与排名表
+- 模型排名表
 - 客观评分公式展示
 - TS / BIAS / SSIM 总评分表
 - TS / BIAS / SSIM 逐 6 分钟折线图
   - 每个指标各 4 张图：20 dBZ、35 dBZ、45 dBZ、阈值综合
   - 每张图中不同颜色代表不同模型
+  - x 轴刻度字号已调大，右侧 `180` 和 `min` 分两行显示，避免重叠
 - 经典个例
   - 经典个例时间选择，目前为 `2026-07-06 00:00`
   - 播放速度选择：`0.5x / 1x / 2x / 4x`
   - 单帧展示：选择 6-180 min 预报时效
   - 3 小时预报：统一时钟驱动的同步帧播放器，避免多个 GIF 不同步
   - 当前展示 7 路：观测、AccuRadar、Model-02、Model-03、Model-04、Model-05、Model-06
+
+已删除首页顶部 4 个概览卡片：
+
+```text
+模型数量
+当前最佳
+经典个例
+评估时效
+```
 
 ## 重要数据约定
 
@@ -230,6 +256,26 @@ workflow 会发布：
 public/
 ```
 
+部署状态记录：
+
+- 首次推送已完成，远端分支为 `main`
+- GitHub Pages Source 已设置为 `GitHub Actions`
+- 第一次 Actions 发布曾在 `actions/deploy-pages@v4` 阶段出现 `Deployment failed, try again later.`
+- 通过空提交 `Retry GitHub Pages deployment` 重新触发后部署成功
+- 后续如果遇到同类临时失败，通常重新运行 workflow 或推一个小提交即可
+
+服务器到 GitHub 的 HTTPS push 不稳定，当前已经改用 SSH Deploy Key。服务器私钥路径：
+
+```text
+/home/shh/.ssh/id_ed25519_nowcasting_dashboard
+```
+
+远端地址：
+
+```bash
+git@github.com:sunhuihang/nowcasting-dashboard.git
+```
+
 后续更新流程建议在服务器执行：
 
 ```bash
@@ -237,10 +283,29 @@ cd /home/shh/比赛/nowcasting-dashboard
 git status --short
 git add public scripts .github README.md DATA_CONTRACT.md .gitignore
 git commit -m "Update dashboard"
-git push
+GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_nowcasting_dashboard' git push
 ```
 
 提交前务必检查不要包含 `private/`、`.nc`、原始 PNG。
+
+敏感文件检查命令：
+
+```bash
+git ls-files | grep -E '(^private/|\.nc$|\.zip$)'
+```
+
+如果没有输出，说明当前 Git 跟踪文件中没有这些敏感数据。
+
+`.gitignore` 当前至少应包含：
+
+```gitignore
+private/
+*.zip
+*.nc
+__pycache__/
+*.pyc
+.DS_Store
+```
 
 ## 当前占位模型
 
@@ -322,4 +387,3 @@ Model-06
 - 绘图使用 PNG 观测网格范围
 - 预测按起报时间加 lead 对齐观测
 - 降水/雷达绘图遵守 AGENTS.md 的气象配色规范
-
